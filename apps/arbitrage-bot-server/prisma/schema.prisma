@@ -1,0 +1,49 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Exchange {
+  apiUrl    String?
+  createdAt DateTime @default(now())
+  id        String   @id @default(cuid())
+  name      String?
+  prices    Price[]
+  updatedAt DateTime @updatedAt
+}
+
+model Price {
+  createdAt        DateTime        @default(now())
+  cryptocurrency   Cryptocurrency? @relation(fields: [cryptocurrencyId], references: [id])
+  cryptocurrencyId String?
+  exchange         Exchange?       @relation(fields: [exchangeId], references: [id])
+  exchangeId       String?
+  id               String          @id @default(cuid())
+  price            Float?
+  timestamp        DateTime?
+  updatedAt        DateTime        @updatedAt
+}
+
+model ArbitrageOpportunity {
+  buyExchange  String?
+  createdAt    DateTime  @default(now())
+  crypto       String?
+  id           String    @id @default(cuid())
+  profit       Float?
+  sellExchange String?
+  timestamp    DateTime?
+  updatedAt    DateTime  @updatedAt
+}
+
+model Cryptocurrency {
+  createdAt   DateTime @default(now())
+  id          String   @id @default(cuid())
+  name        String?
+  prices      Price[]
+  symbolField String?
+  updatedAt   DateTime @updatedAt
+}
